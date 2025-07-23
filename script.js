@@ -268,27 +268,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Colisiones ---
-  function checkTightCollision(obj1, obj2, shrink = 0.3) {
-    const r1 = obj1.getBoundingClientRect();
-    const r2 = obj2.getBoundingClientRect();
+  // Función general de colisión ajustable
+function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
+  const r1 = obj1.getBoundingClientRect();
+  const r2 = obj2.getBoundingClientRect();
 
-    const r1ShrinkX = (r1.width * shrink) / 2;
-    const r1ShrinkY = (r1.height * shrink) / 2;
+  const shrinkX = (r1.width * shrink) / 2;
+  const shrinkY = (r1.height * shrink) / 2;
 
-    const tightR1 = {
-      top: r1.top + r1ShrinkY,
-      bottom: r1.bottom - r1ShrinkY,
-      left: r1.left + r1ShrinkX,
-      right: r1.right - r1ShrinkX,
-    };
+  const tightR1 = {
+    top: r1.top + shrinkY,
+    bottom: r1.bottom - shrinkY,
+    left: r1.left + shrinkX,
+    right: r1.right - shrinkX,
+  };
 
-    return !(
-      tightR1.right < r2.left ||
-      tightR1.left > r2.right ||
-      tightR1.bottom < r2.top ||
-      tightR1.top > r2.bottom
-    );
-  }
+  return !(
+    tightR1.right < r2.left ||
+    tightR1.left > r2.right ||
+    tightR1.bottom < r2.top ||
+    tightR1.top > r2.bottom
+  );
+}
+
 
   // --- Lógica principal del juego ---
   let memePlaying = false; // Variable de control
@@ -310,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dx || dy) setPlayerPosition(playerX + dx, playerY + dy);
 
       // Interacción inicial con NPC
-      if (!npcInteracted && checkTightCollision(player, npc) && keys.Space) {
+      if (!npcInteracted && checkUltraTightCollision(player, npc, 0.995) && keys.Space) {
         keys.Space = false;
         npcInteracted = true;
 
@@ -333,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Reproducción de video meme tras interacción inicial
       if (npcInteracted) {
         const memeVideo = document.getElementById("meme-video");
-        const isCollidingWithNPC = checkTightCollision(player, npc);
+        const isCollidingWithNPC = checkUltraTightCollision(player, npc);
         const gift7Unlocked =
           giftsFound === giftImages.length ||
           document.querySelector(".gift.locked") === null;
@@ -383,10 +385,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (npcInteracted) {
         document.querySelectorAll(".gift").forEach((gift) => {
           if (
-            gift.dataset.found === "false" &&
-            checkTightCollision(player, gift) &&
-            keys.Space
-          ) {
+    gift.dataset.found === "false" &&
+    checkUltraTightCollision(player, gift, 0.995) &&
+    keys.Space
+  ) {
             const id = parseInt(gift.dataset.id);
 
             if (
