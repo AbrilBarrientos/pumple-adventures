@@ -1,0 +1,419 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Press Start 2P', cursive, monospace;
+  /* Fuente pixelada, carga de Google Fonts recomendable */
+}
+
+body {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #131313;
+}
+
+/* --- Fondo del Juego (Fijo) --- */
+#game-container {
+  position: relative;
+  width: 1440px;
+  height: 825px;
+  background-color: #080808;
+  background-image: url('assets/game_background.jpg');
+    background-size: 120% 120%; /* más grande que el contenedor */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-position: center center;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+/* Capa de opacidad negra */
+#game-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+    rgba(141, 105, 26, 0.3); /* luz cálida ambiental */
+
+  border-radius: 15px;
+  pointer-events: none;
+
+  backdrop-filter: blur(2px); /* efecto sutil de ambiente */
+  -webkit-backdrop-filter: blur(2px);
+
+  transition: all 0.5s ease-in-out;
+}
+
+/* --- Pantalla de Inicio/Fin con fondo animado --- */
+/* Fondo estilo Stardew Valley romántico */
+.menu-screen {
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/main-menu.jpg"); /* tu fondo */
+  background-size: cover;
+  background-position: center;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.sky-animation {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(6, 30, 75, 0.473), rgba(255, 255, 255, 0.6));
+  animation: skyShift 15s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes skyShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.menu-content {
+  text-align: center;
+  color: #fff0f5;
+  font-family: 'Georgia', serif;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.menu-title {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  color: #fdd; /* violáceo-rosado */
+}
+
+.game-options {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+}
+
+.menu-button {
+  background-color: rgba(240, 244, 255, 0.2);
+  border: 2px solid #fff;
+  border-radius: 10px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1.2rem;
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.menu-button:hover {
+  background-color: rgba(42, 217, 248, 0.3);
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+
+.character {
+  position: absolute;
+
+  width: 410px;
+  height: 510px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: left 0.05s ease, top 0.05s ease;
+}
+
+#player {
+  background-image: url('assets/nico.png');
+  position: absolute;
+  width: 415px;
+  height: 415px;
+  transform-origin: center center;
+  transition: transform 0.05s ease;
+  z-index: 10;
+}
+
+
+
+#npc, #gift7 {
+  position: absolute;
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-5px);
+  }
+}
+
+@keyframes subtleGlowFilter {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
+}
+
+#npc {
+  background-image: url('assets/yo.png');
+  width: 380px;
+  height: 380px;
+  top: 200px;
+  left: 900px;
+  position: absolute;
+  animation: subtleFloat 4s ease-in-out infinite, subtleGlowFilter 4s ease-in-out infinite;
+  z-index: 5; /* corregido */
+  transform-origin: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+
+
+
+
+.gift {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 40;
+
+  /* Agrega efecto de parpadeo brillante */
+  animation: giftPulse 1.6s ease-in-out infinite,
+    giftFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+  transition: transform 0.3s ease;
+}
+
+.gift.locked {
+  width: 150px;
+  height: 150px;
+  filter: brightness(0.2) grayscale(1);
+  position: relative;
+  background-image: none !important; /* Oculta la imagen */
+  background-color: rgba(0, 0, 0, 0.685); /* Fondo negro mientras está bloqueado */
+}
+
+.gift.locked::after {
+  content: "🔒";
+  color: white;
+  font-size: 4rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+#gift-counter {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 25px 30px;
+  border-radius: 5px;
+  font-size: 1.2em;
+  z-index: 10;
+}
+
+#gifts-wrapper {
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  pointer-events: auto;
+  z-index: 15;
+}
+
+.gift {
+  position: absolute;
+  width: 200px; /* coincide con giftSize en JS */
+  height: 200px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 15px;
+  z-index: 100;
+}
+
+/* Brillo pulsante */
+@keyframes giftPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(241, 231, 183, 0.5));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgb(248, 236, 167));
+  }
+}
+
+/* Movimiento flotante suave */
+@keyframes giftFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+
+
+
+/* Cinemáticas */
+#cinematic-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: white;
+}
+
+#cinematic-video {
+  max-width: 90vw;
+  max-height: 65vh;
+  border: 3px solid white;
+  margin-bottom: 1rem;
+  background: black;
+  
+  border-radius: 20px !important;
+}
+
+#cinematic-text {
+  font-family: 'Press Start 2P', cursive, monospace;
+  font-size: 14px;
+  color: white;
+  margin-top: 20px;
+  max-width: 80vw;
+  text-align: center;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* Botones pantalla inicio/fin */
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 1;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Controles de juego */
+.game-options {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+#mute-button {
+  background-color: #5fb3be;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(5, 11, 99, 0.3);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#mute-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Ocultar el elemento de audio */
+#background-music {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.instruction-text {
+  letter-spacing: 2px;
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 35px;
+  font-size: 20px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.658);
+  padding: 15px 20px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1000;
+  user-select: none;
+}
+
+/* Para ocultarlo */
+
+#screen-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none; /* deja interactuar con lo de abajo */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#screen-frame::before,
+#screen-frame::after {
+  content: "";
+  display: block;
+  height: 40px; /* altura de las barras */
+  background-color: black;
+  width: 100%;
+  border-radius: 0 0 15px 15px;
+}
+

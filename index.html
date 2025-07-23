@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pumple Adventures!</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body>
+  <div id="game-container">
+    <div id="screen-frame"></div>
+
+    <div id="player" class="character hidden"></div>
+    <div id="npc" class="character hidden"></div>
+    <div id="gift7" class="gift torta-rojo"></div>
+
+    <div id="gift-counter" class="hidden">Regalos desbloqueados: 0/5</div>
+
+    <!-- Contenedor para gifts con posición absoluta -->
+    <div id="gifts-wrapper"></div>
+
+    <div id="cinematic-overlay" class="hidden">
+      <video id="cinematic-video" controls muted></video>
+      <p id="cinematic-text"></p>
+    </div>
+
+
+    <div id="start-end-screen" class="menu-screen">
+  <div class="sky-animation"></div>
+
+  <div class="menu-content">
+    <h1 class="menu-title">¡Feliz Cumpleaños!</h1>
+
+    <div class="game-options">
+      <button id="start-button" class="menu-button" title="Iniciar juego">
+        <i class="fas fa-play"></i> Iniciar
+      </button>
+      <button id="restart-button" class="menu-button hidden" title="Reiniciar">
+        <i class="fas fa-redo"></i> Reiniciar
+      </button>
+      <button id="mute-button" class="menu-button" title="Música">
+        <i class="fas fa-volume-up"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Indicacion central al iniciar -->
+  <div id="instruction-text" class="instruction-text">
+    <strong>W A S D</strong> para moverte y <strong>SPACE</strong> para hablar con tu novia.
+  </div>
+
+  <!-- Audios -->
+  <audio id="background-music" src="assets/audio/menu_music.mp3" loop></audio>
+  <audio id="pickup-sound" src="assets/audio/pickup.mp3"></audio>
+  <audio id="npc-music" src="assets/audio/npc_intro.mp3"></audio>
+  <audio id="end-music" src="assets/audio/end_cinematic.mp3"></audio>
+  <audio id="menu-music" src="assets/audio/menu_musi.mp3" loop></audio>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
