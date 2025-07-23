@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     { video: "", text: "¡Medias Game of Thrones desbloqueadaas!", audio: "" },
     { video: "", text: "¡Cuaderno A4 de Historia desbloqueado!", audio: "" },
-    { video: "", text: "¡Una remera Nike salvaje apareció!", audio: "" },
+    { video: "cinematics/cinematica_remera-nike.mp4", text: "¡Una remera Nike salvaje apareció!", audio: "" },
     { video: "", text: "¡Otro jogger por si el otro no te entra!", audio: "" },
     { video: "", text: "¡La torta final, tu premio máximo!", audio: "" },
   ];
@@ -358,11 +358,11 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
           // Posicionar encima del NPC
           const npcRect = npc.getBoundingClientRect();
           const containerRect = gameContainer.getBoundingClientRect();
-          const cmToPx = 27.8;
-          const offsetY = cmToPx * 5;
+          const cmToPx = 30.8;
+          const offsetY = cmToPx * 6;
 
           const left =
-            npcRect.left - containerRect.left + npcRect.width / 2 - 160; // centrado (320px / 2)
+            npcRect.left - containerRect.left + npcRect.width / 2 - 110; // centrado (320px / 2)
           const top = npcRect.top - containerRect.top - offsetY;
 
           memeVideo.style.left = `${left}px`;

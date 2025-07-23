@@ -153,6 +153,7 @@ body {
   z-index: 5;
 
   transform-origin: center;
+  filter: drop-shadow(5px 5px 8px rgba(0,0,0,0.5));
 }
 
 /* Aplica máscara de silueta negra al NPC */
@@ -160,21 +161,17 @@ body {
 
 /* Animación de "floating" */
 @keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-4px); }
+  40%  { transform: translateY(-8px); }
+  60%  { transform: translateY(-12px); }
+  80%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
 }
 
+
 #npc.floating {
-  animation: float 1.5s ease infinite;
+  animation: float 2s stedps(2, end) infinite;
 }
 
 
@@ -205,9 +202,9 @@ body {
 }
 
 .gift.locked::after {
-  content: "🔒";
+  content: "?";
   color: white;
-  font-size: 4rem;
+  font-size: 3rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -271,9 +268,8 @@ body {
 }
 
 #cinematic-video {
-  max-width: 90vw;
-  max-height: 65vh;
-  border: 3px solid white;
+  max-width: 1080px;
+  max-height: 570px;
   margin-bottom: 1rem;
   background: black;
   border-radius: 20px !important;
@@ -291,8 +287,8 @@ body {
 
 .npc-meme-video {
   position: absolute;
-  width: 320px;
-  height: auto;
+  width: 220px;
+  height: 220px;
   z-index: 50;
   mix-blend-mode: screen;
   pointer-events: none;
@@ -382,13 +378,3 @@ body {
   border-radius: 0 0 15px 15px;
 }
 
-#meme-video {
-  position: absolute;
-  width: 320px;
-  height: 240px;
-  border-radius: 8px;
-  z-index: 100;
-  pointer-events: none;
-  background-color: transparent;
-  filter: drop-shadow(0 0 10px lime);
-}
