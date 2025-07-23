@@ -1,7 +1,6 @@
 * {
   box-sizing: border-box;
   font-family: 'Press Start 2P', cursive, monospace;
-  /* Fuente pixelada, carga de Google Fonts recomendable */
 }
 
 body {
@@ -13,23 +12,20 @@ body {
   background-color: #131313;
 }
 
-/* --- Fondo del Juego (Fijo) --- */
 #game-container {
   position: relative;
   width: 1440px;
   height: 825px;
   background-color: #080808;
   background-image: url('assets/game_background.jpg');
-    background-size: 120% 120%; /* más grande que el contenedor */
+  background-size: 120% 120%;
   background-position: center center;
   background-repeat: no-repeat;
-  background-position: center center;
   overflow: hidden;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 }
 
-/* Capa de opacidad negra */
 #game-container::before {
   content: '';
   position: absolute;
@@ -37,29 +33,21 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-
-  background: radial-gradient(
-      ellipse at center,
+  background: radial-gradient(ellipse at center,
       rgba(0, 0, 0, 0.3) 0%,
-      rgba(0, 0, 0, 0.6) 100%
-    ),
-    rgba(141, 105, 26, 0.3); /* luz cálida ambiental */
-
+      rgba(0, 0, 0, 0.6) 100%),
+    rgba(141, 105, 26, 0.3);
   border-radius: 15px;
   pointer-events: none;
-
-  backdrop-filter: blur(2px); /* efecto sutil de ambiente */
+  backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
-
   transition: all 0.5s ease-in-out;
 }
 
-/* --- Pantalla de Inicio/Fin con fondo animado --- */
-/* Fondo estilo Stardew Valley romántico */
 .menu-screen {
   position: absolute;
   inset: 0;
-  background-image: url("assets/main-menu.jpg"); /* tu fondo */
+  background-image: url("assets/main-menu.jpg");
   background-size: cover;
   background-position: center;
   z-index: 100;
@@ -81,6 +69,7 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   100% {
     background-position: 100% 50%;
   }
@@ -96,7 +85,7 @@ body {
 .menu-title {
   font-size: 3rem;
   margin-bottom: 2rem;
-  color: #fdd; /* violáceo-rosado */
+  color: #fdd;
 }
 
 .game-options {
@@ -126,11 +115,8 @@ body {
   display: none !important;
 }
 
-
-
 .character {
   position: absolute;
-
   width: 410px;
   height: 510px;
   background-size: contain;
@@ -140,7 +126,6 @@ body {
 
 #player {
   background-image: url('assets/nico.png');
-  position: absolute;
   width: 415px;
   height: 415px;
   transform-origin: center center;
@@ -148,42 +133,48 @@ body {
   z-index: 10;
 }
 
-
-
-#npc, #gift7 {
+#npc,
+#gift7 {
   position: absolute;
 }
 
-@keyframes subtleFloat {
-  0%, 100% {
-    transform: scaleX(-1) translateY(0);
-  }
-  50% {
-    transform: scaleX(-1) translateY(-5px);
-  }
-}
-
-@keyframes subtleGlowFilter {
-  0%, 100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.15);
-  }
-}
-
 #npc {
-  background-image: url('assets/yo.png');
+  position: absolute;
   width: 380px;
   height: 380px;
   top: 200px;
   left: 900px;
-  position: absolute;
-  animation: subtleFloat 4s ease-in-out infinite, subtleGlowFilter 4s ease-in-out infinite;
-  z-index: 5; /* corregido */
-  transform-origin: center;
+
+  background-image: url('assets/yo.png');
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
+
+  z-index: 5;
+
+  transform-origin: center;
+}
+
+/* Aplica máscara de silueta negra al NPC */
+
+
+/* Animación de "floating" */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+#npc.floating {
+  animation: float 1.5s ease infinite;
 }
 
 
@@ -192,15 +183,14 @@ body {
 
 .gift {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
   background-size: contain;
   background-repeat: no-repeat;
-  z-index: 40;
-
-  /* Agrega efecto de parpadeo brillante */
-  animation: giftPulse 1.6s ease-in-out infinite,
-    giftFloat 3s ease-in-out infinite;
+  background-position: center;
+  border-radius: 15px;
+  z-index: 100;
+  animation: giftPulse 1.6s ease-in-out infinite, giftFloat 3s ease-in-out infinite;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
   transition: transform 0.3s ease;
 }
@@ -210,8 +200,8 @@ body {
   height: 150px;
   filter: brightness(0.2) grayscale(1);
   position: relative;
-  background-image: none !important; /* Oculta la imagen */
-  background-color: rgba(0, 0, 0, 0.685); /* Fondo negro mientras está bloqueado */
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.685);
 }
 
 .gift.locked::after {
@@ -224,6 +214,29 @@ body {
   transform: translate(-50%, -50%);
 }
 
+@keyframes giftPulse {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(241, 231, 183, 0.5));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgb(248, 236, 167));
+  }
+}
+
+@keyframes giftFloat {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
 
 #gift-counter {
   position: absolute;
@@ -239,59 +252,15 @@ body {
 
 #gifts-wrapper {
   position: absolute;
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0;
+  inset: 0;
   pointer-events: auto;
   z-index: 15;
 }
 
-.gift {
-  position: absolute;
-  width: 200px; /* coincide con giftSize en JS */
-  height: 200px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 15px;
-  z-index: 100;
-}
-
-/* Brillo pulsante */
-@keyframes giftPulse {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 6px rgba(241, 231, 183, 0.5));
-  }
-
-  50% {
-    filter: drop-shadow(0 0 12px rgb(248, 236, 167));
-  }
-}
-
-/* Movimiento flotante suave */
-@keyframes giftFloat {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-
-
-
 /* Cinemáticas */
 #cinematic-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
@@ -307,7 +276,6 @@ body {
   border: 3px solid white;
   margin-bottom: 1rem;
   background: black;
-  
   border-radius: 20px !important;
 }
 
@@ -321,25 +289,27 @@ body {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Botones pantalla inicio/fin */
+.npc-meme-video {
+  position: absolute;
+  width: 320px;
+  height: auto;
+  z-index: 50;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.8;
+@keyframes appearMeme {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
   }
 
-  100% {
-    transform: scale(2);
+  to {
+    transform: scale(1);
     opacity: 1;
   }
 }
 
-.hidden {
-  display: none !important;
-}
-
-/* Controles de juego */
 .game-options {
   margin-top: 30px;
   display: flex;
@@ -366,7 +336,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* Ocultar el elemento de audio */
 #background-music {
   display: none;
   visibility: hidden;
@@ -376,32 +345,28 @@ body {
 }
 
 .instruction-text {
+  width: 70%;
   letter-spacing: 2px;
   position: absolute;
-  top: 80%;
+  bottom: 30px;
   left: 50%;
   transform: translate(-50%, -50%);
   line-height: 35px;
   font-size: 20px;
   color: white;
   background-color: rgba(0, 0, 0, 0.658);
-  padding: 15px 20px;
+  padding: 15px 17px;
   border-radius: 8px;
   text-align: center;
   z-index: 1000;
   user-select: none;
 }
 
-/* Para ocultarlo */
-
 #screen-frame {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 9999;
-  pointer-events: none; /* deja interactuar con lo de abajo */
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -411,9 +376,19 @@ body {
 #screen-frame::after {
   content: "";
   display: block;
-  height: 40px; /* altura de las barras */
+  height: 40px;
   background-color: black;
   width: 100%;
   border-radius: 0 0 15px 15px;
 }
 
+#meme-video {
+  position: absolute;
+  width: 320px;
+  height: 240px;
+  border-radius: 8px;
+  z-index: 100;
+  pointer-events: none;
+  background-color: transparent;
+  filter: drop-shadow(0 0 10px lime);
+}

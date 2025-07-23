@@ -15,7 +15,8 @@
     <div id="screen-frame"></div>
 
     <div id="player" class="character hidden"></div>
-    <div id="npc" class="character hidden"></div>
+    <div id="npc" class="character floating breathing"></div>
+
     <div id="gift7" class="gift torta-rojo"></div>
 
     <div id="gift-counter" class="hidden">Regalos desbloqueados: 0/5</div>
@@ -27,37 +28,42 @@
       <video id="cinematic-video" controls muted></video>
       <p id="cinematic-text"></p>
     </div>
+    <video id="meme-video" class="npc-meme-video hidden" playsinline></video>
+
+
+
 
 
     <div id="start-end-screen" class="menu-screen">
-  <div class="sky-animation"></div>
+      <div class="sky-animation"></div>
 
-  <div class="menu-content">
-    <h1 class="menu-title">¡Feliz Cumpleaños!</h1>
+      <div class="menu-content">
+        <h1 class="menu-title">¡Feliz Cumpleaños!</h1>
 
-    <div class="game-options">
-      <button id="start-button" class="menu-button" title="Iniciar juego">
-        <i class="fas fa-play"></i> Iniciar
-      </button>
-      <button id="restart-button" class="menu-button hidden" title="Reiniciar">
-        <i class="fas fa-redo"></i> Reiniciar
-      </button>
-      <button id="mute-button" class="menu-button" title="Música">
-        <i class="fas fa-volume-up"></i>
-      </button>
+        <div class="game-options">
+          <button id="start-button" class="menu-button" title="Iniciar juego">
+            <i class="fas fa-play"></i> Iniciar
+          </button>
+          <button id="restart-button" class="menu-button hidden" title="Reiniciar">
+            <i class="fas fa-redo"></i> Reiniciar
+          </button>
+          <button id="mute-button" class="menu-button" title="Música">
+            <i class="fas fa-volume-up"></i>
+          </button>
+        </div>
+      </div>
     </div>
+     <div id="instruction-text" class="instruction-text">
+    <strong>W A S D</strong> para moverte y <strong>SPACE</strong> para interactuar con el NPC que para nada es tu novia con regalos.
   </div>
-</div>
 
 
 
-    </div>
+  </div>
   </div>
 
   <!-- Indicacion central al iniciar -->
-  <div id="instruction-text" class="instruction-text">
-    <strong>W A S D</strong> para moverte y <strong>SPACE</strong> para hablar con tu novia.
-  </div>
+ 
 
   <!-- Audios -->
   <audio id="background-music" src="assets/audio/menu_music.mp3" loop></audio>
