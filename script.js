@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const instructionText = document.getElementById("instruction-text");
 
   const backgroundMusic = document.getElementById("background-music");
+  const menuMusic = document.getElementById("menu-music");
   const pickupSound = document.getElementById("pickup-sound");
   const npcMusic = document.getElementById("npc-music");
   const endMusic = document.getElementById("end-music");
@@ -55,36 +56,56 @@ document.addEventListener("DOMContentLoaded", () => {
     "assets/cuaderno-a4.png",
     "assets/remera-nike.png",
     "assets/jogger2.png",
-    "assets/rojo-torta.png", // ← REGALO FINAL BLOQUEADO
+    "assets/rojo-torta.png", //
   ];
 
   const giftCinematics = [
     {
-      video: "",
+      video: "cinematics/cinematica_jogger1.mp4",
       text: "¡Jogger de dudosa procedencia desbloqueado! (10k en avellaneda)",
+      audio: "assets/audio/cinematic-audio.mp3",
+    },
+    {
+      video: "cinematics/cinematica_buzo-nike.mp4",
+      text: "¡Buzo Nike SWOOSH desbloqueado!",
+      audio: "assets/audio/cinematic-audio.mp3",
+    },
+    {
+      video: "cinematics/cinematica_got-mediass.mp4",
+      text: "¡Medias Game of Thrones desbloqueadaas!",
       audio: "",
     },
     {
-      video: "assets/buzonikeswoosh.mp4",
-      text: "¡Buzo Nike SWOOSH desbloqueado!",
-      audio: "",
+      video: "",
+      text: "¡Cuaderno A4 de Historia desbloqueado!",
+      audio: "assets/audio/cinematic-audio.mp3",
     },
-    { video: "", text: "¡Medias Game of Thrones desbloqueadaas!", audio: "" },
-    { video: "", text: "¡Cuaderno A4 de Historia desbloqueado!", audio: "" },
-    { video: "cinematics/cinematica_remera-nike.mp4", text: "¡Una remera Nike salvaje apareció!", audio: "" },
-    { video: "", text: "¡Otro jogger por si el otro no te entra!", audio: "" },
-    { video: "", text: "¡La torta final, tu premio máximo!", audio: "" },
+    {
+      video: "cinematics/cinematica_remera-nike.mp4",
+      text: "¡Una remera Nike salvaje apareció!",
+      audio: "assets/audio/cinematic-audio.mp3",
+    },
+    {
+      video: "cinematics/cinematica_jogger2.mp4",
+      text: "¡Otro jogger por si el otro no te entra!",
+      audio: "assets/audio/cinematic-audio.mp3",
+    },
+    {
+      video: "",
+      text: "CHOCOTORTA DEL BOJO DESBLOQUEADAAA!!",
+      audio: "assets/audio/bojo.mp3",
+    },
   ];
 
   const finalCinematic = {
-    video: "",
-    text: "Te amooooo",
+    video: "cinematics/cinematica_end.mp4",
+    text: "🩷",
     audio: "",
   };
 
   const npcCinematic = {
-    video: "",
-    text: "28/08",
+    video: "cinematics/cinematica_npc.mp4",
+    text: "🩷",
     audio: "",
   };
 
@@ -225,72 +246,104 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Cinemáticas sin video real ---
-  function showCinematic({ video, text, audio }, callback, isFinal = false) {
+  // --- Cinemáticas con video y audio particular ---
+  let isFinalCinematicPlaying = false;
+
+  function showCinematic(
+    { video, text, audio },
+    callback = null,
+    isFinal = false
+  ) {
     cinematicOverlay.classList.remove("hidden");
     cinematicText.textContent = text;
+
+    // Pausar música de fondo siempre al mostrar una cinemática
+    backgroundMusic.pause();
+
+    // Si es la cinemática final, activamos bandera
+    if (isFinal) {
+      isFinalCinematicPlaying = true;
+    }
+
+    // Detener audio de cinemática previo
+    if (cinematicOverlay.currentAudio) {
+      cinematicOverlay.currentAudio.pause();
+      cinematicOverlay.currentAudio = null;
+    }
+
+    // Reproducir audio específico de la cinemática
+    let cinematicAudio = null;
+    if (audio && !isMuted) {
+      cinematicAudio = new Audio(audio);
+      cinematicAudio.volume = 0.7;
+      cinematicAudio.play().catch(() => {});
+      cinematicOverlay.currentAudio = cinematicAudio;
+    }
+
+    gameActive = false;
+
+    const finishCinematic = () => {
+      cinematicOverlay.classList.add("hidden");
+
+      // Ejecutar callback si existe
+      if (callback) callback();
+
+      if (isFinal) {
+        // Asegurar que backgroundMusic no suene más
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+        endGame();
+        isFinalCinematicPlaying = false; // por si reinicia el juego
+      } else {
+        gameActive = true;
+        if (!isMuted && !isFinalCinematicPlaying) {
+          backgroundMusic.play().catch(() => {});
+        }
+      }
+    };
 
     if (video) {
       cinematicVideo.src = video;
       cinematicVideo.classList.remove("hidden");
-      cinematicVideo.muted = true;
+      cinematicVideo.muted = false;
+
       cinematicVideo.play().catch(() => {});
 
       cinematicVideo.onended = () => {
-        cinematicOverlay.classList.add("hidden");
+        cinematicVideo.onended = null;
         cinematicVideo.classList.add("hidden");
         cinematicVideo.src = "";
-        if (callback) callback();
-        if (isFinal) {
-          endGame();
-        } else {
-          gameActive = true;
-          if (!isMuted) backgroundMusic.play();
-        }
+        finishCinematic();
       };
     } else {
       cinematicVideo.classList.add("hidden");
-
-      setTimeout(() => {
-        cinematicOverlay.classList.add("hidden");
-        if (callback) callback();
-        if (isFinal) {
-          endGame();
-        } else {
-          gameActive = true;
-          if (!isMuted) backgroundMusic.play();
-        }
-      }, 4000);
+      setTimeout(finishCinematic, 4000);
     }
-
-    gameActive = false;
-    if (!isMuted) backgroundMusic.pause();
   }
 
   // --- Colisiones ---
   // Función general de colisión ajustable
-function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
-  const r1 = obj1.getBoundingClientRect();
-  const r2 = obj2.getBoundingClientRect();
+  function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
+    const r1 = obj1.getBoundingClientRect();
+    const r2 = obj2.getBoundingClientRect();
 
-  const shrinkX = (r1.width * shrink) / 2;
-  const shrinkY = (r1.height * shrink) / 2;
+    const shrinkX = (r1.width * shrink) / 2;
+    const shrinkY = (r1.height * shrink) / 2;
 
-  const tightR1 = {
-    top: r1.top + shrinkY,
-    bottom: r1.bottom - shrinkY,
-    left: r1.left + shrinkX,
-    right: r1.right - shrinkX,
-  };
+    const tightR1 = {
+      top: r1.top + shrinkY,
+      bottom: r1.bottom - shrinkY,
+      left: r1.left + shrinkX,
+      right: r1.right - shrinkX,
+    };
 
-  return !(
-    tightR1.right < r2.left ||
-    tightR1.left > r2.right ||
-    tightR1.bottom < r2.top ||
-    tightR1.top > r2.bottom
-  );
-}
-
+    return !(
+      tightR1.right < r2.left ||
+      tightR1.left > r2.right ||
+      tightR1.bottom < r2.top ||
+      tightR1.top > r2.bottom
+    );
+  }
 
   // --- Lógica principal del juego ---
   let memePlaying = false; // Variable de control
@@ -312,9 +365,16 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
       if (dx || dy) setPlayerPosition(playerX + dx, playerY + dy);
 
       // Interacción inicial con NPC
-      if (!npcInteracted && checkUltraTightCollision(player, npc, 0.995) && keys.Space) {
+      if (
+        !npcInteracted &&
+        checkUltraTightCollision(player, npc, 0.995) &&
+        keys.Space
+      ) {
         keys.Space = false;
         npcInteracted = true;
+
+        // *** NUEVO: ocultar la instrucción en la primera interacción con el NPC ***
+        instructionText.classList.add("hidden");
 
         // Cambiar imagen del NPC a la real
         npc.style.backgroundImage = "url('assets/yo.png')";
@@ -350,7 +410,7 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
           keys.Space = false;
 
           // Configuración del video
-          memeVideo.src = "assets/kiss-fish.mp4"; // ← ruta de tu video con chroma
+          memeVideo.src = "assets/kisss-fish.mp4"; // ← ruta de tu video con chroma
           memeVideo.muted = false;
           memeVideo.playbackRate = 1;
           memeVideo.currentTime = 0;
@@ -385,10 +445,10 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
       if (npcInteracted) {
         document.querySelectorAll(".gift").forEach((gift) => {
           if (
-    gift.dataset.found === "false" &&
-    checkUltraTightCollision(player, gift, 0.995) &&
-    keys.Space
-  ) {
+            gift.dataset.found === "false" &&
+            checkUltraTightCollision(player, gift, 0.995) &&
+            keys.Space
+          ) {
             const id = parseInt(gift.dataset.id);
 
             if (
@@ -431,62 +491,67 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
 
   // --- Inicialización del juego ---
   // --- Inicialización del juego ---
-  function initGame() {
-    giftsFound = 0;
-    npcInteracted = false;
-    gameActive = false;
-    gameFinished = false;
+function initGame() {
+  giftsFound = 0;
+  npcInteracted = false;
+  gameActive = false;
+  gameFinished = false;
 
-    giftCounter.textContent = `Regalos encontrados: 0/${giftImages.length}`;
-    giftCounter.classList.add("hidden");
+  giftCounter.textContent = `Regalos encontrados: 0/${giftImages.length}`;
+  giftCounter.classList.add("hidden");
+  instructionText.classList.add("hidden"); // Ocultar instrucciones en menú inicial
 
-    player.classList.add("hidden");
+  player.classList.add("hidden");
 
-    // Primero quitamos 'hidden' y luego agregamos 'breathing' para que se aplique bien
-    npc.classList.remove("hidden");
-    npc.classList.add("breathing");
+  npc.classList.remove("hidden");
+  npc.classList.add("breathing");
 
-    // Ponemos la silueta como imagen de fondo del NPC al iniciar el juego
-    npc.style.backgroundImage = "url('assets/yo-silueta.png')";
-    npc.style.backgroundSize = "cover";
-    npc.style.backgroundRepeat = "no-repeat";
-    npc.style.backgroundColor = "transparent"; // para evitar fondo negro no deseado
+  npc.style.backgroundImage = "url('assets/yo-silueta.png')";
+  npc.style.backgroundSize = "cover";
+  npc.style.backgroundRepeat = "no-repeat";
+  npc.style.backgroundColor = "transparent";
 
-    giftsWrapper.innerHTML = "";
-    cinematicOverlay.classList.add("hidden");
-    cinematicVideo.classList.add("hidden");
+  giftsWrapper.innerHTML = "";
+  cinematicOverlay.classList.add("hidden");
+  cinematicVideo.classList.add("hidden");
 
-    // Ocultar instrucción en menú de inicio
-    instructionText.classList.add("hidden");
+  backgroundMusic.src = "assets/audio/background-music.mp3";
+  backgroundMusic.volume = 0.1;
+  backgroundMusic.loop = true;
 
-    backgroundMusic.src = "assets/audio/menu_music.mp3";
-    backgroundMusic.volume = 0.3;
-    backgroundMusic.loop = true;
-    backgroundMusic.muted = isMuted;
+  menuMusic.volume = 0.25;
+  menuMusic.loop = true;
+  menuMusic.currentTime = 0;
+  if (!isMuted) {
+    menuMusic.play().catch(() => {});
+  }
+}
+
+function startGameplay() {
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
+
+  startEndScreen.classList.add("hidden");
+  player.classList.remove("hidden");
+  npc.classList.remove("hidden");
+  setPlayerPosition(50, 50);
+  gameActive = true;
+
+  instructionText.classList.remove("hidden"); // <-- Aquí se muestra la instrucción
+
+  if (!isMuted) {
+    backgroundMusic.play().catch(() => {});
   }
 
-  function startGameplay() {
-    startEndScreen.classList.add("hidden");
-    player.classList.remove("hidden");
-    npc.classList.remove("hidden");
-    setPlayerPosition(50, 50);
-    gameActive = true;
-
-    // Mostrar instrucción apenas inicia el juego
-    instructionText.classList.remove("hidden");
-
-    if (!isMuted) {
-      backgroundMusic.play().catch(() => {});
-    }
-
-    if (!animationFrameId) {
-      animationFrameId = requestAnimationFrame(gameLoop);
-    }
+  if (!animationFrameId) {
+    animationFrameId = requestAnimationFrame(gameLoop);
   }
+}
 
   function endGame() {
     gameFinished = true;
     gameActive = false;
+
     player.classList.add("hidden");
     npc.classList.add("hidden");
     giftsWrapper.innerHTML = "";
@@ -495,7 +560,17 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
     cinematicVideo.classList.add("hidden");
     instructionText.classList.add("hidden");
 
+    // Asegurar que la música de fondo no suene más
     backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+
+    // Si querés música de cierre:
+    // Volver a la música de menú
+    if (!isMuted) {
+      menuMusic.currentTime = 0;
+      menuMusic.play().catch(() => {});
+    }
+
     startEndScreen.classList.remove("hidden");
     screenTitle.textContent = "¡Feliz Cumpleaños!";
     startButton.classList.remove("hidden");
@@ -521,16 +596,24 @@ function checkUltraTightCollision(obj1, obj2, shrink = 0.995) {
   // --- Botones ---
   muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
-    [backgroundMusic, pickupSound, npcMusic, endMusic].forEach(
+    [backgroundMusic, pickupSound, npcMusic, endMusic, menuMusic].forEach(
       (audio) => (audio.muted = isMuted)
     );
 
     if (isMuted) {
       muteIcon.classList.replace("fa-volume-up", "fa-volume-mute");
       backgroundMusic.pause();
+      menuMusic.pause();
     } else {
       muteIcon.classList.replace("fa-volume-mute", "fa-volume-up");
-      backgroundMusic.play().catch(() => {});
+
+      // Si estoy en el menú inicial o final (no activo y no terminado aún => menú inicial,
+      // o terminado => estamos en pantalla final) => reproducir menuMusic.
+      if (!gameActive || gameFinished) {
+        menuMusic.play().catch(() => {});
+      } else if (gameActive && !gameFinished && !isFinalCinematicPlaying) {
+        backgroundMusic.play().catch(() => {});
+      }
     }
   });
 
