@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const giftCinematics = [
     {
       video: "cinematics/cinematica_jogger1.mp4",
-      text: "¡Jogger de dudosa procedencia desbloqueado! (10k en avellaneda)",
+      text: "¡Jogger de dudosa procedencia desbloqueado!",
       audio: "assets/audio/cinematic-audio.mp3",
     },
     {
@@ -87,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
       audio: "assets/audio/cinematic-audio.mp3",
     },
     {
-      video: "",
+      video: "cinematics/cinematic_tortaa.mp4",
       text: "CHOCOTORTA DEL BOJO DESBLOQUEADAAA!!",
-      audio: "assets/audio/bojo.mp3",
+      audio: "assets/audio/cinematic-audio.mp3",
     },
   ];
 
